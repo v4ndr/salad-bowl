@@ -1,0 +1,69 @@
+<%- include('layouts/header.ejs') -%>
+<%
+   var total = scores.reduce((a,b)=>a+b,0);
+   var comp = 0;
+   var colors = ["bg-success", "bg-primary","bg-danger","bg-secondary","bg-warning","bg-dark"];
+%> 
+<div class="logo mb-3">
+    <div class="col-md-12 text-center">
+       <h1><%=title%></h1>
+    </div>
+ </div> 
+ <br>
+ <div class="col-md-12 text-center ">
+<div class="progress mb-4">
+   <%scores.forEach(score => {
+      perc = Math.round((score/total)*100);
+      %>
+      <div class="progress-bar <%=colors[comp]%>" role="progressbar" style = "<%="width:"+perc%>%;" aria-valuenow="<%=perc%>" aria-valuemin="0" aria-valuemax="100"><%=score%></div>
+   <%
+      comp++;
+   });%>
+</div>
+<%
+comp = 0;
+scores.forEach(score=>{
+   comp++;
+%>
+   <span style="white-space: nowrap;"><span style="border-radius: 100%;" class="border <%=colors[comp-1]%>">&nbsp;&nbsp;&nbsp;&nbsp;</span> Equipe <%=comp%> </span>
+<%});%>
+
+<br>
+<span id="end" hidden><%=end%></span>
+<%if(end == 1){%>
+<br>
+<br>
+<a href="/"><button type="button" class="btn btn-block mybtn btn-primary tx-tfm">REJOUER ?</button></a>
+</div>
+<%}
+else{%>
+   <br>
+   <p style="font-size: 15px; font-weight: 100;">La prochaine manche commence dans quelques instants...</p>
+</div>
+   <%}%>
+
+ 
+ 
+<%- include('layouts/footer.ejs') -%>
+
+<script>
+$(()=>{
+   var socket = io.connect('http://localhost:3000');
+   socket.on('connect', ()=>{
+       socket.emit('join', {room : '<%=roomName%>', player : '<%=myself%>'});
+   });
+
+   var end = $('#end').text();
+   end = parseInt(end);
+   if (end == 1){
+      socket.emit('atend');
+   }
+   else {
+      setTimeout(()=>{
+         socket.emit('setemptybowl');
+         window.location.replace("/game");
+      }, 8000);
+   }
+});
+</script>
+

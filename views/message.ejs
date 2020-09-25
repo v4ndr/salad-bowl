@@ -1,0 +1,32 @@
+<%- include('layouts/header.ejs') -%>
+
+
+    <div class="col-md-12 text-center">
+       <h1><%=msg%></h1>
+       
+       <img src="/loading.gif">
+    </div>
+
+
+<%- include('layouts/footer.ejs') -%>
+
+
+<script>
+    $(function() {
+       //initialisation du tunnel
+       var socket = io.connect('http://localhost:3000');
+        socket.on('connect', ()=>{
+        socket.emit('join', {room : '<%=roomName%>', player : '<%=myself%>'});
+       });
+ 
+       //reception
+       socket.on('end',(emptyBowl)=>{
+         if(emptyBowl){
+            window.location.replace('/scores');
+         }
+         else{
+            window.location.replace('/game');
+         }
+      });
+    }); 
+ </script>

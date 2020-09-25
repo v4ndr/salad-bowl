@@ -1,0 +1,75 @@
+<%- include('layouts/header.ejs') -%>
+
+
+
+<div class="logo mb-3">
+   <div class="col-md-12 text-center">
+      <h1>A VOUS DE JOUER</h1>
+   </div>
+</div>
+
+   
+   <div class="col-md-12 text-center ">
+      <br>
+      <p id="horloge">60 s</p>
+      <br>
+      <p id="word"><%=firstWord%></p>
+      <br><br>
+      <div class="row">
+         <div class="col-6">
+            <button  id="passer" type="ready" class=" btn btn-block mybtn btn-warning tx-tfm">PASSER</button>
+         </div>
+         <div class="col-6">
+            <button  id="valider" type="ready" class=" btn btn-block mybtn btn-success tx-tfm">VALIDER</button>
+         </div>
+      </div>
+      <br>
+   </div>
+
+<%- include('layouts/footer.ejs') -%>
+
+<script>
+   $(function() {
+      //initialisation du tunnel
+      var socket = io.connect('http://localhost:3000');
+       socket.on('connect', ()=>{
+       socket.emit('join', {room : '<%=roomName%>', player : '<%=myself%>'});
+      });
+
+      //timing
+      function countdown() {
+         var maintenant = new Date();
+         var msMaintenant = maintenant.getTime();
+         var restant = msDate - msMaintenant;
+         if(restant <= 0){
+            socket.emit('endtime');
+         }
+         else{
+            restant = Math.floor(restant/1000);
+            var h = restant+" s";
+            $('#horloge').text(h);
+         }
+      }
+      var date = new Date();
+      var msDate= date.getTime();
+      msDate = msDate + 61000;
+      setInterval(countdown, 1000);
+
+      //emission
+      $('#valider').click(function(){
+         socket.emit('next');
+      });
+      $('#passer').click(function(){
+         socket.emit('pass');
+      });
+
+      //reception
+      socket.on('newword',(word)=>{
+         $('#word').text(word);
+      });
+      socket.on('end',()=>{
+         window.location.replace('/game');   
+      });
+   }); 
+</script>
+

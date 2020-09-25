@@ -1,0 +1,117 @@
+<%- include('layouts/header.ejs') -%>
+
+<div class="logo mb-3">
+    <div class="col-md-12 text-center">
+       <h1>Choisissez votre équipe</h1>
+       <img src="/loading.gif" style="display: none;">
+    </div>
+ </div>
+ <div class="col-md-12 text-center ">
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table table-striped">
+         <thead>
+           <tr>
+             <th scope="col">NOM</th>
+             <th scope="col">EQUIPE</th>
+             <th scope="col">PRET</th>
+           </tr>
+         </thead>
+         <tbody>
+           <% players.forEach(plr => {%>
+            <tr id="<%=plr.name%>">
+              <td><%=plr.name%></td>
+              <td><%="Equipe "+plr.team%></td>
+              <%if(plr.ready){%>
+                <td><span style="border-radius: 100%;" class="border bg-success">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+              <%}
+              else{%>
+                <td><span style="border-radius: 100%;" class="border bg-danger">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+              <%}%>
+            </tr>
+           <%}); %>
+         </tbody>
+       </table>
+</div>
+       <br>
+       <form action="" method="POST">
+       <select class="form-control" name="select" required>
+          <%for(i=1;i<teamNumber+1;i++){
+            var teamName = "Equipe "+i;
+            %>
+             <option value="<%=i%>"><%=teamName%></option>
+          <%}%>
+       </select>
+       <br>
+        <button  id="ready" type="button" class=" btn btn-block mybtn btn-warning tx-tfm">PRET</button>
+       </form>
+ </div>
+
+<%- include('layouts/footer.ejs') -%>
+
+<script>
+  $(()=>{
+    //mise en place du socket client
+    var socket = io.connect('http://localhost:3000');
+    socket.on('connect', ()=>{
+      socket.emit('join', {room : '<%=roomName%>', player : '<%=myself%>'});
+    });
+    
+    //gestion des changement d'equipe et du ready status (front tous les clients + objets)
+    var button = document.querySelector("button"); 
+    var select = document.querySelector("select"); 
+    button.addEventListener("click", ()=>{
+      $('#ready').toggleClass('btn-warning');
+      $('#ready').toggleClass('btn-success');
+      $('#error').remove();
+      select.toggleAttribute("disabled");
+      socket.emit('readychange');
+    });
+    $('select').change(()=>{
+      var team = $("select").val();
+      socket.emit('teamchange', team);
+    });
+
+    //au moindre changement dans le lobby on refresh
+    socket.on('refreshlobby', (plrs)=>{
+      $('tbody').remove();
+      $('table').append('<tbody></tbody>');
+      plrs.forEach(plr => {
+        $('tbody').append('<tr id="'+plr.name+'"></tr>');
+        $('tr:last').append('<td>'+plr.name+'</td>');
+        $('tr:last').append('<td>Equipe '+plr.team+'</td>');
+        if(plr.ready){
+          $('tr:last').append('<td><span style="border-radius: 100%;" class="border bg-success">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>');
+        }
+        else{
+          $('tr:last').append('<td><span style="border-radius: 100%;" class="border bg-danger">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>');
+        }
+      });
+    });
+
+    //sortie de lobby
+    var idTimeout;
+    socket.on('allready',(last)=>{
+      $('h1').hide();
+      $('img').show();
+      if(last){
+        idTimeout = setTimeout(()=>{
+          socket.emit('preparegame');
+        }, 3000);
+      }
+    });
+    socket.on('unallready',(error)=>{
+      if(idTimeout){
+        clearTimeout(idTimeout);
+      }
+      $('h1').show();
+      $('img').hide();
+      if(error){
+        $('form').append('<br id="error">');
+        $('form').append('<p id="error" style="font-size : 15px; font-weight : 100; color : red;">Une ou plusieurs équipes sont vides.</p>')
+      }
+    });
+    socket.on('game',()=>{
+        window.location.replace("/game");
+    });
+  });  
+</script>

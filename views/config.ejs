@@ -1,0 +1,62 @@
+<%- include('layouts/header.ejs') -%>
+
+ <div class="col-md-12 text-center ">
+  <form action="/config" method="POST">
+    <h1 class="text-uppercase"><%=roomName%></h1>
+        <br><br>
+        <label>Nombre d'équipes</label>
+        <div class="form-group">
+            <button class="noborder-button" id="minus1" type="button"><span class="fa fa-minus fa-lg"></span></button>
+            <input type="text" name="teamNumber" class="short-entry" id="teamNumber" value="2" required>
+            <button class="noborder-button" id="plus1" type="button"><span class="fa fa-plus fa-lg"></span></button>
+        </div>
+        <label>Nombre de mots par joueur</label>
+        <div class="form-group">
+            <button class="noborder-button" id="minus2" type="button"><span class="fa fa-minus fa-lg"></span></button>
+            <input type="text" name="wordsNumber" class="short-entry" id="wordsNumber" value="1" required>
+            <button class="noborder-button" id="plus2" type="button"><span class="fa fa-plus fa-lg"></span></button>
+        </div>
+        <br>
+        <button id="valText" type="submit" class="btn btn-block mybtn btn-primary tx-tfm">OK</button>
+     </form>
+ </div>
+
+<%- include('layouts/footer.ejs') -%>
+
+<script>
+     $(()=>{
+        $('#minus1').click(()=>{
+          var teamNumber = parseInt($('#teamNumber').val());
+          teamNumber = teamNumber-1;
+          if (teamNumber<1){
+              teamNumber = 1;
+          }
+          $('#teamNumber').val(teamNumber);
+        });
+        $('#plus1').click(()=>{
+          var teamNumber = parseInt($('#teamNumber').val());
+          teamNumber = teamNumber+1;
+          if (teamNumber>6){
+              teamNumber = 6;
+          }
+          $('#teamNumber').val(teamNumber);
+        }); 
+      
+        $('#minus2').click(()=>{
+          var wordsNumber = parseInt($('#wordsNumber').val());
+          wordsNumber = wordsNumber-1;
+          if (wordsNumber<1){
+            wordsNumber = 1;
+          }
+          $('#wordsNumber').val(wordsNumber);
+        });
+        $('#plus2').click(()=>{
+          var wordsNumber = parseInt($('#wordsNumber').val());
+          wordsNumber = wordsNumber+1;
+          if (wordsNumber>10){
+            wordsNumber = 10;
+          }
+          $('#wordsNumber').val(wordsNumber);
+        }); 
+      });
+    </script>

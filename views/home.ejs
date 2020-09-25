@@ -1,0 +1,62 @@
+<%- include('layouts/header.ejs') -%>
+<!--
+   code erreurs : errorCode
+   0 - pas d'erreur
+   1 - erreur player
+   2 - ereeur partie sur join
+   3 - erreur partie sur host
+   4 - partie pas prête
+
+-->
+<div class="logo mb-3">
+   <div class="col-md-12 text-center">
+      <h1>SALAD BOWL</h1>
+   </div>
+</div>
+<br>
+<div class="col-md-12 text-center ">
+   <form action="/join" method="POST">
+      <label for="playerName" class="alignleft">Pseudo :</label>
+      <input type="text" id="playerName" name="playerName" class="form-control" placeholder="Votre pseudo" required>
+      <%if(errorCode == 1){%>
+      <span class="error alignleft">Ce pseudo existe déjà.</span><br><%}%>
+      <br>
+       <label for="roomName" class="alignleft">Nom de la partie :</label>
+       <input type="text" id="roomName" name="roomName" class="form-control" placeholder="Nom de la partie à rejoindre" required>
+       <%if(errorCode == 2){%>
+       <span class="error alignleft">Cette partie n'existe pas.</span><%}%>
+       <%if(errorCode == 3){%>
+       <span class="error alignleft">Ce nom de partie existe déjà.</span><%}%>
+       <%if(errorCode == 4){%>
+         <span class="error alignleft">Cette partie est en cours de création.</span><%}%>
+       <br>
+       <br>
+       <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">REJOINDRE LA PARTIE</button>
+       <br>
+       <button type="submit" formaction="/host" class=" btn btn-block mybtn btn-success tx-tfm">CREER UNE PARTIE</button>
+       <br>
+   </form>
+</div>
+
+<%- include('layouts/footer.ejs') -%>
+
+<script>
+   $(()=>{
+      var socket = io.connect('http://localhost:3000');
+      $('#roomName').keyup(()=>{
+         var str = $('#roomName').val();
+         if(!isAN(str)){
+            str = str.slice(0,-1);
+            $('#roomName').val(str);
+         }
+      });
+      $('#playerName').keyup(()=>{
+         var str = $('#playerName').val();
+         if(!isAN(str)){
+            str = str.slice(0,-1);
+            $('#playerName').val(str);
+         }
+      });
+   });
+   
+</script>

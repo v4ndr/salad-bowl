@@ -1,0 +1,37 @@
+<%- include('layouts/header.ejs') -%>
+
+<div class="logo mb-3">
+    <div class="col-md-12 text-center">
+       <h1>Entrez vos mots</h1>
+    </div>
+ </div>
+ 
+ <div class="col-md-12 text-center ">
+    <form action="/submit-words" method="POST">
+        <div class="form-group mx-sm-auto mb-2">
+          <%for(i=0;i<wordsNumber;i++){%>
+            <input name="words[]" type="text" class="form-control" id="<%=i%>" placeholder="Votre mot" required/>
+            <br>
+          <%}%>
+        </div>
+        <button  type="submit" class=" btn btn-block mybtn btn-primary tx-tfm">OK</button>
+    </form>
+ </div>
+
+<%- include('layouts/footer.ejs') -%>
+
+<script>
+   $(()=>{
+   <%
+   for(i=0;i<wordsNumber;i++){
+   %>
+   $('#<%=i%>').keyup(()=>{
+         var str = $('#<%=i%>').val();
+         if(!isANS(str)){
+            str = str.slice(0,-1);
+            $('#<%=i%>').val(str);
+         }
+      });
+   <%}%>
+   });
+</script>
