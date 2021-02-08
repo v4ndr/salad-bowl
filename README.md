@@ -17,6 +17,10 @@ don't quit your browser in game, it may cause unwanted behavior.
 
 Good game !
 
+# DEV
+Node.js app
+Front framework : boostrap
+
 # SCREENSHOTS
 
 <a href="https://imgur.com/Wxu7EdS"><img src="https://i.imgur.com/Wxu7EdS.png" title="source: imgur.com" /></a>
