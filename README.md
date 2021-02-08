@@ -18,7 +18,7 @@ don't quit your browser in game, it may cause unwanted behavior.
 Good game !
 
 # DEV
-Node.js app with socket.io \n
+Node.js app with socket.io<br/>
 Front framework : boostrap
 
 # SCREENSHOTS
